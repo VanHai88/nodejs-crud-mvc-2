@@ -1,0 +1,55 @@
+Hôm nay em xin trình bày về dự án Node.js với mô hình MVC và CRUD cho hệ thống quản lý sản phẩm. Dự án này là phần em đang học về Backend với Node.js, API RESTful và Express.
+
+1. Mục tiêu dự án
+- Em đã có nền tảng JavaScript và frontend, nên muốn tập trung học backend bằng Node.js.
+- Dự án sử dụng Express để xây dựng RESTful API, phục vụ cho frontend React.
+- Dữ liệu được lưu trong file JSON giả lập, giúp mô hình API hoạt động giống như truy vấn cơ sở dữ liệu.
+
+2. Các công nghệ chính
+- RESTful API: là kiểu kiến trúc dùng HTTP methods để thao tác tài nguyên.
+  + GET — lấy dữ liệu
+  + POST — tạo tài nguyên
+  + PUT/PATCH — cập nhật tài nguyên
+  + DELETE — xoá tài nguyên
+- Express: Framework Node.js giúp tạo server nhanh và quản lý routing dễ dàng.
+  + Routing: định tuyến các URL tới các hàm xử lý tương ứng.
+  + Middleware: xử lý request/response, ví dụ parse JSON và hỗ trợ CORS.
+
+3. Kiến trúc MVC trong dự án
+Mô hình MVC giúp tách biệt chức năng thành ba phần chính, làm mã nguồn dễ bảo trì và mở rộng.
+
+- Model: chịu trách nhiệm thao tác dữ liệu. Ở dự án này, Model đọc và ghi file `src/data/data.json`.
+- Controller: chứa logic xử lý request và gọi Model.
+- Routes: định nghĩa endpoint và chuyển request đến Controller.
+- View: vì đây là API, nên View được thay bằng dữ liệu JSON trả về cho frontend.
+
+4. Cấu trúc dự án
+- `src/app.ts`: entry point của ứng dụng, cấu hình Express, middleware và route.
+- `src/routes/productRoutes.ts`: định nghĩa các endpoint như `/api/products`, `/api/products/:id`.
+- `src/controllers/productController.ts`: xử lý các hành động CRUD.
+- `src/models/productModel.ts`: đọc, ghi và cập nhật dữ liệu trong `data.json`.
+- `src/types.ts`: định nghĩa kiểu dữ liệu `Product`.
+- `src/data/data.json`: file lưu dữ liệu sản phẩm mẫu.
+
+5. Luồng xử lý một request
+1. Client (frontend React) gửi request, ví dụ: `GET http://localhost:3000/api/products/123`.
+2. Route trong `productRoutes.ts` nhận request và gọi method tương ứng trong Controller.
+3. Controller nhận request, lấy tham số ID và gọi Model.
+4. Model đọc `data.json`, tìm product theo ID và trả về.
+5. Controller nhận kết quả và trả JSON cho client.
+
+6. Ví dụ các endpoint
+- `GET /api/products`: lấy danh sách sản phẩm.
+- `GET /api/products/:id`: lấy chi tiết sản phẩm.
+- `POST /api/products`: tạo sản phẩm mới.
+- `PUT /api/products/:id`: cập nhật sản phẩm.
+- `DELETE /api/products/:id`: xoá sản phẩm.
+
+7. Điểm nhấn của dự án
+- Tập trung vào backend Node.js và API RESTful.
+- Áp dụng mô hình MVC giúp tách rõ phần dữ liệu, logic và định tuyến.
+- Dữ liệu JSON giả lập cho phép học cách mô phỏng database mà không cần cài đặt hệ quản trị.
+- Hỗ trợ CORS để frontend React có thể gọi API từ `localhost:5173`.
+
+Kết luận: dự án là một ví dụ cơ bản nhưng đầy đủ cho RESTful API với Node.js, Express và TypeScript, phù hợp để luyện tập kiến trúc MVC và CRUD.
+

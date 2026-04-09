@@ -1,0 +1,71 @@
+Dưới đây là giải thích toàn bộ dự án Node.js MVC API này, bao gồm cấu trúc thư mục, các file chính và luồng hoạt động theo quy trình bạn yêu cầu.
+
+Tổng quan dự án
+  - Công nghệ: Node.js với Express framework, TypeScript, JSON file làm "database" giả lập.
+  - Mô hình: MVC (Model-View-Controller), nhưng vì là API, không có View (thay bằng JSON response).
+  - Chức năng: CRUD (Create, Read, Update, Delete) cho entities như Products (và có thể mở rộng Users).
+  - CORS: Đã được enable để hỗ trợ frontend React tại localhost:5173.
+
+Cấu trúc thư mục
+
+d:\nodejs-v6\
+├── .gitignore          # Ignore files không cần commit (node_modules, dist, logs, etc.)
+├── package.json        # Dependencies (express, cors) và scripts (build, start, dev)
+├── tsconfig.json       # Cấu hình TypeScript (compile từ src/ sang dist/)
+├── README.md           # Tài liệu hướng dẫn
+└── src/                # Source code TypeScript
+    ├── app.ts          # Entry point: Khởi tạo Express app, middleware, routes
+    ├── types.ts        # Định nghĩa interfaces (e.g., Product)
+    ├── controllers/    # Logic xử lý requests
+    │   └── productController.ts  # CRUD logic cho Products
+    ├── models/         # Xử lý dữ liệu (đọc/ghi JSON)
+    │   └── productModel.ts       # Model cho Products
+    ├── routes/         # Định nghĩa API endpoints
+    │   └── productRoutes.ts      # Routes cho Products
+    └── data/           # Dữ liệu giả lập
+        └── data.json   # File JSON chứa danh sách Products
+
+- Luồng hoạt động (theo quy trình bạn mô tả)
+- Dự án tuân thủ quy trình xử lý request chuẩn của MVC:
+
+1. Client gửi yêu cầu (Request)
+Ví dụ: GET http://localhost:3000/api/products/123 (xem chi tiết sản phẩm ID 123) từ React app.
+
+2. Routes tiếp nhận và chuyển hướng
+
+  - File routes/productRoutes.ts định nghĩa endpoints (e.g., router.get('/products/:id', ProductController.getById)).
+  - Request được forward tới method tương ứng trong Controller.
+
+3. Controller yêu cầu Model
+
+  - File controllers/productController.ts chứa logic: Nhận params từ request, gọi Model để truy vấn dữ liệu.
+  - Ví dụ: ProductController.getById gọi ProductModel.getById(id).
+4. Model truy vấn "database"
+
+  - File models/productModel.ts xử lý dữ liệu: Đọc/ghi file data/data.json bằng fs module.
+  - Ví dụ: getById parse JSON, tìm product theo ID.
+
+5.Model trả kết quả về Controller
+
+  - Dữ liệu (hoặc null nếu không tìm thấy) được trả về Controller.
+
+6.Controller trả JSON về Client
+
+  - Controller format response (e.g., res.json(product) hoặc res.status(404).json({ message: 'Not found' })).
+  - Client nhận JSON để render trên React.
+
+Chi tiết các file chính
+
+  - app.ts: Khởi tạo server, enable CORS, parse JSON, mount routes tại /api.
+  - types.ts: Interface Product { id, name, price, description }.
+  - productModel.ts: Static methods như getAll(), getById(), create(), update(), delete() – đọc/ghi JSON đồng bộ.
+  - productController.ts: Methods xử lý HTTP: Validate input, gọi Model, trả response.
+  - productRoutes.ts: Map HTTP methods tới Controller (GET, POST, PUT, DELETE).
+  - data.json: Mảng JSON chứa products mẫu.
+
+Cách chạy
+npm install (cài dependencies).
+npm run build (compile TS sang JS trong dist).
+npm start (chạy server từ app.js).
+Hoặc npm run dev (chạy trực tiếp từ TS với ts-node).
+API endpoints: /api/products (GET all, POST create), /api/products/:id (GET, PUT, DELETE).
